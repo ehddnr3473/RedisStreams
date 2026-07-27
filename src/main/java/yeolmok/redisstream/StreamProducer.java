@@ -1,5 +1,6 @@
 package yeolmok.redisstream;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.RedisStreamCommands.XAddOptions;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
+@RequiredArgsConstructor
 public class StreamProducer {
 
     private static final long MAXLEN = 1000;
@@ -18,10 +20,6 @@ public class StreamProducer {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private static final AtomicInteger counter = new AtomicInteger(0);
-
-    public StreamProducer(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     @Scheduled(fixedRate = 10000)
     public void publish() {

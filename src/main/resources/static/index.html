@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Redis Stream Counter</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 80px; }
+        #counter { font-size: 96px; font-weight: bold; }
+        #status { color: #999; font-size: 14px; }
+        #time { color: #666; }
+        #log { margin-top: 40px; text-align: left; display: inline-block; max-width: 480px; }
+        #log li { font-family: monospace; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div id="status">connecting...</div>
+    <div id="counter">-</div>
+    <div id="time"></div>
+    <ul id="log"></ul>
+
+    <script>
+        const counterEl = document.getElementById('counter');
+        const timeEl = document.getElementById('time');
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
+
+        const source = new EventSource('/alarms/subscribe');
+
+        source.onopen = () => {
+            statusEl.textContent = 'connected';
+        };
+
+        source.onerror = () => {
+            statusEl.textContent = 'disconnected, retrying...';
+        };
+
+        source.addEventListener('alarm', (event) => {
+            const data = JSON.parse(event.data);
+            const match = data.message.match(/\d+/);
+
+            counterEl.textContent = match ? match[0] : data.message;
+            timeEl.textContent = data.time;
+
+            const item = document.createElement('li');
+            item.textContent = `[${data.time}] ${data.message}`;
+            logEl.prepend(item);
+        });
+    </script>
+</body>
+</html>

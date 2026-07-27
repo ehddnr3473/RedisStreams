@@ -1,7 +1,7 @@
 package yeolmok.redisstream;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.PendingMessage;
@@ -16,6 +16,7 @@ import java.util.List;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class PendingMessageRecoverer {
 
     private static final String RECOVERY_CONSUMER = "consumer-recovery";
@@ -23,10 +24,6 @@ public class PendingMessageRecoverer {
     private static final Duration MIN_IDLE_TIME = Duration.ofSeconds(30);
 
     private final RedisTemplate<String, Object> redisTemplate;
-
-    public PendingMessageRecoverer(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
 
     @Scheduled(fixedRate = 30000)
     public void recover() {
